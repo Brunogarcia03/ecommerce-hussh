@@ -1,4 +1,6 @@
 import Product from "../ui/Product";
+import Sizes from "../home/Sizes";
+
 import img1 from "@/assets/images/img_1.jpg";
 import img2 from "@/assets/images/img_2.jpg";
 import img3 from "@/assets/images/img_3.jpg";
@@ -41,13 +43,16 @@ const ProductsGrid = () => {
   return (
     <section className="product-grid hidden w-full bg-black text-white px-6 pt-24 pb-16">
       {/* Section header */}
-      <div className="flex items-baseline justify-between mb-10 border-b border-white/20 pb-6">
+      <div className="flex flex-col md:flex-row items-baseline justify-between mb-10 border-b border-white/20 pb-6">
         <h2 className="font-barlow text-3xl font-extrabold uppercase text-white">
           Collection
         </h2>
-        <p className="font-spline text-[0.65rem] text-gray uppercase">
-          {products.length} items — SS 26
-        </p>
+        <div className="flex items-center gap-x-4">
+          <Sizes />
+          <p className="font-spline text-[0.65rem] text-gray uppercase">
+            {products.length} items — SS 26
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-x-[1.6rem] gap-y-12">

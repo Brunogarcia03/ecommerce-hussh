@@ -38,7 +38,7 @@ function ParallaxImage({
   return (
     <div
       ref={containerRef}
-      className="hidden img-hero w-full h-svh overflow-hidden"
+      className="hidden img-hero w-full h-svh overflow-hidden mt-5 md:mt-0"
     >
       <Image
         ref={imageRef}

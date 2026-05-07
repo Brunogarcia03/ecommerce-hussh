@@ -197,6 +197,13 @@ const Hero = () => {
               document
                 .querySelector(".product-grid")
                 ?.classList.remove("hidden");
+              document
+                .querySelector(".video-section")
+                ?.classList.remove("hidden");
+              document
+                .querySelector(".instagram-section")
+                ?.classList.remove("hidden");
+              document.querySelector(".about")?.classList.remove("hidden");
             },
           },
           "<",

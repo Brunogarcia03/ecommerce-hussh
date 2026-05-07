@@ -132,7 +132,7 @@ function VideoCard({ item }: { item: VideoItem }) {
             transform: active ? "translateY(-4px)" : "translateY(0)",
           }}
         >
-          <span className="font-spline text-[0.55rem] text-white/40 uppercase border border-dashed border-white/20 px-2 py-[2px]">
+          <span className="font-spline text-[0.55rem] text-white/40 uppercase border border-dashed border-white/20 px-2 py-0.5">
             {item.season}
           </span>
         </div>
@@ -147,7 +147,7 @@ function VideoCard({ item }: { item: VideoItem }) {
               xmlns="http://www.w3.org/2000/svg"
               width="12"
               height="12"
-              className="fill-white/40 translate-x-[1px]"
+              className="fill-white/40 translate-x-px"
               viewBox="0 0 256 256"
             >
               <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z" />
@@ -163,9 +163,18 @@ function VideoCard({ item }: { item: VideoItem }) {
             transform: active ? "translateY(0)" : "translateY(6px)",
           }}
         >
-          <div className="flex flex-col gap-[2px]">
-            <span className="font-spline text-[0.55rem] text-white/50 uppercase">
-              ▶ Playing
+          <div className="flex flex-col gap-0.5">
+            <span className="flex items-center gap-x-2 font-spline text-[0.55rem] text-gray font-bold uppercase">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                className="fill-gray size-[0.55rem]"
+                viewBox="0 0 256 256"
+              >
+                <path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"></path>
+              </svg>{" "}
+              Playing
             </span>
             <span className="font-barlow text-xl font-extrabold text-white uppercase leading-none">
               {item.category}
@@ -257,10 +266,10 @@ function InfoCard() {
 
 export default function VideoSection() {
   return (
-    <section className="w-full bg-black text-white px-6 pt-24 pb-16">
+    <section className="hidden video-section w-full bg-black text-white px-6 pt-24 pb-16">
       {/* Header */}
-      <div className="flex items-baseline justify-between mb-10 border-b border-white/20 pb-6">
-        <div className="flex items-baseline gap-4">
+      <div className="flex flex-col md:flex-row items-baseline justify-between mb-10 border-b border-white/20 pb-6">
+        <div className="flex flex-col md:flex-row items-baseline gap-4">
           <h2 className="font-barlow text-3xl font-extrabold uppercase text-white">
             Editorial
           </h2>
@@ -283,13 +292,7 @@ export default function VideoSection() {
 
         Se logra con grid-rows explícito y las celdas usando row/col span
       */}
-      <div
-        className="grid gap-[1.6rem]"
-        style={{
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gridTemplateRows: "auto auto",
-        }}
-      >
+      <div className="grid gap-[1.6rem] grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         {/* 1 — Tall: rowspan 2 */}
         <div style={{ gridRow: "1 / 3", gridColumn: "1 / 2" }}>
           <VideoCard item={videos[0]} />
@@ -333,16 +336,6 @@ export default function VideoSection() {
             <span className="font-spline text-[0.55rem] text-white/10">▊</span>
           </div>
         </div>
-      </div>
-
-      {/* Bottom meta */}
-      <div className="flex items-center justify-between mt-12 pt-6 border-t border-white/20">
-        <p className="font-spline text-[0.55rem] text-gray uppercase">
-          HSH//Editorial — Collection SS 26
-        </p>
-        <p className="font-spline text-[0.55rem] text-gray uppercase">
-          04 Moving Images — Hover to Preview
-        </p>
       </div>
     </section>
   );
