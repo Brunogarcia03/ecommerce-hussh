@@ -194,6 +194,9 @@ const Hero = () => {
               lenis.start();
               gsap.set(".preloader-backdrop", { display: "none" });
               document.querySelector(".img-hero")?.classList.remove("hidden");
+              document
+                .querySelector(".product-grid")
+                ?.classList.remove("hidden");
             },
           },
           "<",

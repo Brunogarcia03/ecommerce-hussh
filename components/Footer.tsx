@@ -32,10 +32,7 @@ const FooterLink = ({
 
 export default function Footer() {
   return (
-    <footer className="hidden w-full bg-black text-white pt-40">
-      {/* Línea superior */}
-      <div className="w-full h-px bg-white" />
-
+    <footer className="hidden w-full bg-black text-white pt-20">
       <div className="p-6 flex flex-col gap-12">
         {/* Footer top */}
         <div className="flex flex-col sm:flex-row justify-between gap-10">

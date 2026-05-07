@@ -1,7 +1,11 @@
 import Hero from "@/components/Hero";
+import About from "@/components/home/About";
 import ProductGrid from "@/components/home/ProductsGrid";
 import HeroTime from "@/components/ui/HeroTime";
 import ParallaxImage from "@/components/ui/Images";
+
+import NavLink from "@/components/ui/NavLink";
+import VideoSection from "@/components/VideoSection";
 
 function Home() {
   return (
@@ -54,88 +58,30 @@ function Home() {
               <div className="hidden md:block text-right text-gray leading-relaxed">
                 <div className="mt-3">
                   <p>Inquiries:</p>
-                  <a
-                    href="mailto:hello@hussh.com"
-                    className="inline-flex items-center gap-2 border border-gray border-dashed text-gray group hover:border-white hover:text-white transition-colors px-3 py-1 mt-1 uppercase"
-                  >
-                    <span className="text-[0.6rem]">Email</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="12px"
-                      height="12px"
-                      fill="#000000"
-                      className="fill-gray group-hover:fill-white transition-colors text-[0.6rem]"
-                      viewBox="0 0 256 256"
-                    >
-                      <path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
-                    </svg>
-                  </a>
+                  <NavLink href="mailto:hello@hussh.com" external>
+                    Email
+                  </NavLink>
                 </div>
               </div>
             </div>
 
             <nav className="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-2 md:mt-5 w-full uppercase">
-              <p className="hidden lg:block">Links:</p>
-              <a
-                href="/"
-                className="text-[0.75rem] inline-flex items-center gap-2 border border-gray border-dashed text-gray hover:border-white hover:text-white transition-colors px-3 py-1 mt-1"
-              >
+              <p className="hidden lg:block font-spline text-[0.65rem] text-gray">
+                Links:
+              </p>
+              <NavLink href="/" icon={false}>
                 Home
-              </a>
-              <a
-                href="/catalog"
-                className="text-[0.75rem] group inline-flex items-center gap-2 border border-gray border-dashed text-gray hover:border-white hover:text-white transition-colors px-3 py-1 mt-1"
-              >
-                <span>Catalog</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12px"
-                  height="12px"
-                  fill="#000000"
-                  className="fill-gray group-hover:fill-white transition-colors text-[0.6rem]"
-                  viewBox="0 0 256 256"
-                >
-                  <path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
-                </svg>
-              </a>
-              <a
-                href="/collections"
-                className="text-[0.75rem] group inline-flex items-center gap-2 border border-gray border-dashed text-gray hover:border-white hover:text-white transition-colors px-3 py-1 mt-1"
-              >
-                <span>Collections</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12px"
-                  height="12px"
-                  fill="#000000"
-                  className="fill-gray group-hover:fill-white transition-colors text-[0.6rem]"
-                  viewBox="0 0 256 256"
-                >
-                  <path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
-                </svg>
-              </a>
-              <a
-                href="/about"
-                className="text-[0.75rem] group inline-flex items-center gap-2 border border-gray border-dashed text-gray hover:border-white hover:text-white transition-colors px-3 py-1 mt-1"
-              >
-                <span>About</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="12px"
-                  height="12px"
-                  fill="#000000"
-                  className="fill-gray group-hover:fill-white transition-colors text-[0.6rem]"
-                  viewBox="0 0 256 256"
-                >
-                  <path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z"></path>
-                </svg>
-              </a>
+              </NavLink>
+              <NavLink href="/catalog">Catalog</NavLink>
+              <NavLink href="/collections">Collections</NavLink>
+              <NavLink href="/about">About</NavLink>
             </nav>
           </div>
         </div>
-
         <ParallaxImage />
-        {/* <ProductGrid /> */}
+        <ProductGrid />
+        <VideoSection />
+        {/* <About /> */}
       </section>
     </main>
   );
