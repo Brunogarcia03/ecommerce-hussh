@@ -1,24 +1,118 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef } from "react";
 
-const lines = [
-  "Hussh was born from the belief",
-  "that clothing should speak quietly.",
-  "No excess. No noise.",
-  "Only what remains when everything",
-  "unnecessary is removed.",
-];
+import gsap from "gsap";
+import { SplitText } from "gsap/SplitText";
+
+gsap.registerPlugin(SplitText);
+
+const text = `
+Hussh was born from the belief
+that clothing should speak quietly.
+No excess. No noise.
+Only what remains when everything
+unnecessary is removed.
+`;
 
 const triggerWords = ["noise.", "everything"];
 
 export default function About() {
-  const [activeTrigger, setActiveTrigger] = useState(false);
+  const textRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!textRef.current) return;
+
+    const split = new SplitText(textRef.current, {
+      type: "words",
+      wordsClass: "manifest-word",
+    });
+
+    const words = split.words as HTMLElement[];
+
+    gsap.set(words, {
+      opacity: 0.18,
+      filter: "blur(3px)",
+      willChange: "opacity, filter",
+    });
+
+    const resetState = () => {
+      gsap.killTweensOf(words);
+
+      words.forEach((word, index) => {
+        const center = Math.floor(words.length / 2);
+
+        const distanceFromCenter = Math.abs(index - center);
+
+        gsap.to(word, {
+          opacity: 0.18,
+          filter: "blur(3px)",
+          duration: 0.9,
+          delay: distanceFromCenter * 0.015,
+          ease: "expo.out",
+        });
+      });
+    };
+
+    const revealAll = (activeIndex: number) => {
+      gsap.killTweensOf(words);
+
+      words.forEach((word, index) => {
+        const distance = Math.abs(index - activeIndex);
+
+        gsap.to(word, {
+          opacity: 1,
+          filter: "blur(0px)",
+          duration: 0.85,
+          delay: distance * 0.035,
+          ease: "expo.out",
+        });
+      });
+    };
+
+    words.forEach((word, index) => {
+      const clean = word.textContent?.trim().toLowerCase() || "";
+
+      const isTrigger = triggerWords.includes(clean);
+
+      word.addEventListener("mouseenter", () => {
+        if (isTrigger) {
+          revealAll(index);
+        } else {
+          gsap.killTweensOf(word);
+
+          gsap.to(word, {
+            opacity: 1,
+            filter: "blur(0px)",
+            duration: 0.45,
+            ease: "power3.out",
+          });
+        }
+      });
+
+      word.addEventListener("mouseleave", () => {
+        if (isTrigger) {
+          resetState();
+        } else {
+          gsap.to(word, {
+            opacity: 0.18,
+            filter: "blur(3px)",
+            duration: 0.6,
+            ease: "power3.out",
+          });
+        }
+      });
+    });
+
+    return () => {
+      split.revert();
+    };
+  }, []);
 
   return (
-    <section className="hidden about relative w-full bg-black text-white px-6 pt-24 pb-16 overflow-hidden">
+    <section className="hidden about relative w-full bg-black text-white sm:px-6 pt-24 pb-16 overflow-hidden">
       {/* Header */}
-      <div className="relative z-10 flex justify-between items-end border-b border-white/10 pb-6">
+      <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between border-b border-white/10 pb-6">
         <h2 className="font-barlow text-3xl font-extrabold uppercase">
           Manifest
         </h2>
@@ -31,93 +125,27 @@ export default function About() {
       {/* Content */}
       <div className="relative z-10 grid md:grid-cols-[1fr_auto] gap-20">
         {/* Text */}
-        <div className="flex flex-col mt-4">
-          {lines.map((line, i) => (
-            <div key={i} className="flex flex-wrap gap-x-4 gap-y-2">
-              {line.split(" ").map((word, index) => {
-                const isTrigger = triggerWords.includes(word.toLowerCase());
-
-                return (
-                  <span
-                    key={index}
-                    onMouseEnter={() => {
-                      if (isTrigger) setActiveTrigger(true);
-                    }}
-                    onMouseLeave={() => {
-                      if (isTrigger) setActiveTrigger(false);
-                    }}
-                    className={`
-                      group/word
-                      relative
-                      inline-block
-                      cursor-default
-                      font-barlow
-                      font-extrabold
-                      uppercase
-                      leading-[0.88]
-                      transition-all
-                      duration-700
-                      ease-out
-                      will-change-transform
-                      
-                      ${
-                        activeTrigger
-                          ? "text-white blur-0"
-                          : "md:text-white/20 md:blur-[3px]"
-                      }
-
-                      hover:text-white
-                      hover:blur-0
-                    `}
-                    style={{
-                      fontSize: "clamp(2rem,5vw,5.5rem)",
-                    }}
-                  >
-                    {/* Trigger glow */}
-                    {isTrigger && (
-                      <span
-                        className="
-                          absolute
-                          inset-0
-                          md:opacity-0
-                          md:blur-xl
-                          transition-opacity
-                          duration-500
-                          md:bg-white/10
-                          rounded-full
-                          group-hover/word:opacity-100
-                        "
-                      />
-                    )}
-
-                    {/* Ghost layer */}
-                    <span
-                      className={`
-                        absolute
-                        inset-0
-                        text-white
-                        md:opacity-0
-                        md:blur-md
-                        transition-all
-                        duration-500
-
-                        ${
-                          activeTrigger
-                            ? "md:opacity-20 md:blur-none"
-                            : "md:group-hover/word:opacity-40"
-                        }
-                      `}
-                    >
-                      {word}
-                    </span>
-
-                    {/* Main */}
-                    <span className="relative">{word}</span>
-                  </span>
-                );
-              })}
-            </div>
-          ))}
+        <div className="mt-6">
+          <div
+            ref={textRef}
+            className="
+              font-barlow
+              font-extrabold
+              uppercase
+              leading-[0.88]
+              tracking-[-0.04em]
+              cursor-default
+              flex
+              flex-wrap
+              gap-x-[0.22em]
+              gap-y-[0.08em]
+            "
+            style={{
+              fontSize: "clamp(2rem,5vw,5.5rem)",
+            }}
+          >
+            {text}
+          </div>
         </div>
 
         {/* Meta */}

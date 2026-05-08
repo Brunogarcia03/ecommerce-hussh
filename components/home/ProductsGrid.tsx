@@ -41,7 +41,7 @@ const products = [
 
 const ProductsGrid = () => {
   return (
-    <section className="product-grid hidden w-full bg-black text-white px-6 pt-24 pb-16">
+    <section className="product-grid hidden w-full bg-black text-white sm:px-6 pt-24 pb-16">
       {/* Section header */}
       <div className="flex flex-col md:flex-row items-baseline justify-between mb-10 border-b border-white/20 pb-6">
         <h2 className="font-barlow text-3xl font-extrabold uppercase text-white">

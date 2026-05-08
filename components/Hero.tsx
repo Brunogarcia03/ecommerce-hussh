@@ -4,7 +4,6 @@ import { gsap } from "gsap";
 import { SplitText } from "gsap/SplitText";
 import CustomEase from "gsap/CustomEase";
 import { useGSAP } from "@gsap/react";
-import Lenis from "lenis";
 
 gsap.registerPlugin(SplitText, CustomEase);
 CustomEase.create("hop", "0.9, 0, 0.1, 1");
@@ -12,13 +11,8 @@ CustomEase.create("glide", "0.8, 0, 0.2, 1");
 
 const Hero = () => {
   useGSAP(() => {
-    // ✅ Lenis inicializado pero pausado — no style.overflow
-    const lenis = new Lenis();
-    lenis.stop();
-
     // RAF loop para que Lenis funcione cuando se reactive
     function raf(time: number) {
-      lenis.raf(time);
       requestAnimationFrame(raf);
     }
     requestAnimationFrame(raf);
@@ -191,7 +185,6 @@ const Hero = () => {
             stagger: 0.15,
             delay: 0.15,
             onComplete: () => {
-              lenis.start();
               gsap.set(".preloader-backdrop", { display: "none" });
               document.querySelector(".img-hero")?.classList.remove("hidden");
               document

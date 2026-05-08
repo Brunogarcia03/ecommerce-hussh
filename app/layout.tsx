@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Spline_Sans_Mono, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
+
+import SmoothScroll from "@/components/SmoothScroll";
 import Footer from "@/components/Footer";
 
 const spline = Spline_Sans_Mono({
@@ -83,8 +85,10 @@ export default function RootLayout({
       className={`${spline.className} ${barlow.className} antialiased`}
     >
       <body className="font-spline">
-        {children}
-        <Footer />
+        <SmoothScroll>
+          {children}
+          <Footer />
+        </SmoothScroll>
       </body>
     </html>
   );

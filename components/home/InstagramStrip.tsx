@@ -92,7 +92,13 @@ function IGCard({ post }: { post: IGPost }) {
 
   const handleEnter = () => {
     setHovered(true);
-    if (post.isVideo) videoRef.current?.play();
+    if (post.isVideo && videoRef.current) {
+      const playPromise = videoRef.current.play();
+
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    }
   };
 
   const handleLeave = () => {
@@ -130,6 +136,7 @@ function IGCard({ post }: { post: IGPost }) {
           src={post.src}
           alt={post.handle}
           fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="object-cover object-top transition-transform duration-700 ease-out"
           style={{ transform: hovered ? "scale(1.06)" : "scale(1.12)" }}
         />

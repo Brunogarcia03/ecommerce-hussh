@@ -1,13 +1,14 @@
 import Hero from "@/components/Hero";
 import About from "@/components/home/About";
-import Sizes from "@/components/home/Sizes";
 import ProductGrid from "@/components/home/ProductsGrid";
 import HeroTime from "@/components/ui/HeroTime";
 import ParallaxImage from "@/components/ui/Images";
 
 import NavLink from "@/components/ui/NavLink";
-import VideoSection from "@/components/VideoSection";
+import VideoSection from "@/components/home/VideoSection";
 import InstagramStrip from "@/components/home/InstagramStrip";
+
+import img_hero from "@/assets/images/img_hero_02.jpg";
 
 function Home() {
   return (
@@ -80,7 +81,7 @@ function Home() {
             </nav>
           </div>
         </div>
-        <ParallaxImage />
+        <ParallaxImage responsive={img_hero.src} />
         <ProductGrid />
         <VideoSection />
         <About />

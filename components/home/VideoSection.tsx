@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 
 interface VideoItem {
   id: string;
@@ -51,32 +51,63 @@ const videos: VideoItem[] = [
   },
 ];
 
+export function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(`(max-width:${breakpoint - 1}px)`);
+
+    const update = () => setIsMobile(media.matches);
+
+    update();
+
+    media.addEventListener("change", update);
+
+    return () => media.removeEventListener("change", update);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 function VideoCard({ item }: { item: VideoItem }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+
   const [active, setActive] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const handleEnter = () => {
+  const isMobile = useIsMobile();
+
+  const handleEnter = async () => {
+    if (isMobile) return;
+
     setActive(true);
-    videoRef.current?.play();
+
+    try {
+      await videoRef.current?.play();
+    } catch {}
   };
 
   const handleLeave = () => {
+    if (isMobile) return;
+
     setActive(false);
+
     if (videoRef.current) {
       videoRef.current.pause();
       videoRef.current.currentTime = 0;
     }
+
     setProgress(0);
   };
 
   const handleTimeUpdate = () => {
     const v = videoRef.current;
+
     if (!v || !v.duration) return;
+
     setProgress((v.currentTime / v.duration) * 100);
   };
 
-  // Aspect ratio según el span
   const aspectRatio =
     item.span === "tall" ? "9/16" : item.span === "wide" ? "16/9" : "3/4";
 
@@ -86,7 +117,6 @@ function VideoCard({ item }: { item: VideoItem }) {
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
     >
-      {/* Video container */}
       <div className="relative overflow-hidden w-full" style={{ aspectRatio }}>
         {/* Placeholder */}
         <div className="absolute inset-0 bg-white/5 flex items-center justify-center z-0">
@@ -100,36 +130,47 @@ function VideoCard({ item }: { item: VideoItem }) {
           ref={videoRef}
           src={item.src}
           className="absolute inset-0 w-full h-full object-cover z-10 transition-transform duration-700 ease-out will-change-transform"
-          style={{ transform: active ? "scale(1.04)" : "scale(1.1)" }}
+          style={{
+            transform: isMobile
+              ? "scale(1)"
+              : active
+                ? "scale(1.04)"
+                : "scale(1.1)",
+          }}
           muted
           loop
           playsInline
           preload="metadata"
+          autoPlay={isMobile}
           onTimeUpdate={handleTimeUpdate}
         />
 
         {/* Overlay */}
         <div
           className="absolute inset-0 z-20 transition-opacity duration-500 bg-black"
-          style={{ opacity: active ? 0.1 : 0.45 }}
+          style={{
+            opacity: isMobile ? 0.2 : active ? 0.1 : 0.45,
+          }}
         />
 
-        {/* Top left — index + title */}
+        {/* Top left */}
         <div className="absolute top-3 left-3 z-30 flex items-center gap-2">
           <span className="font-spline text-[0.55rem] text-white/40 tabular-nums">
             {item.index}
           </span>
+
           <span className="font-spline text-[0.55rem] text-white/40 uppercase">
             {item.title}
           </span>
         </div>
 
-        {/* Top right — season tag */}
+        {/* Season */}
         <div
           className="absolute top-3 right-3 z-30 transition-all duration-300"
           style={{
-            opacity: active ? 0 : 1,
-            transform: active ? "translateY(-4px)" : "translateY(0)",
+            opacity: isMobile ? 1 : active ? 0 : 1,
+            transform:
+              !isMobile && active ? "translateY(-4px)" : "translateY(0)",
           }}
         >
           <span className="font-spline text-[0.55rem] text-white/40 uppercase border border-dashed border-white/20 px-2 py-0.5">
@@ -137,79 +178,69 @@ function VideoCard({ item }: { item: VideoItem }) {
           </span>
         </div>
 
-        {/* Play indicator — centro */}
-        <div
-          className="absolute inset-0 z-30 flex items-center justify-center transition-all duration-300"
-          style={{ opacity: active ? 0 : 1 }}
-        >
-          <div className="border border-dashed border-white/20 rounded-full w-10 h-10 flex items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="12"
-              height="12"
-              className="fill-white/40 translate-x-px"
-              viewBox="0 0 256 256"
-            >
-              <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z" />
-            </svg>
+        {/* Play indicator */}
+        {!isMobile && (
+          <div
+            className="absolute inset-0 z-30 flex items-center justify-center transition-all duration-300"
+            style={{ opacity: active ? 0 : 1 }}
+          >
+            <div className="border border-dashed border-white/20 rounded-full w-10 h-10 flex items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="12"
+                height="12"
+                className="fill-white/40"
+                viewBox="0 0 256 256"
+              >
+                <path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z" />
+              </svg>
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Bottom overlay — category + CTA */}
+        {/* Bottom overlay */}
         <div
           className="absolute bottom-0 left-0 w-full z-30 p-3 flex items-end justify-between transition-all duration-400"
           style={{
-            opacity: active ? 1 : 0,
-            transform: active ? "translateY(0)" : "translateY(6px)",
+            opacity: isMobile ? 1 : active ? 1 : 0,
+            transform: isMobile || active ? "translateY(0)" : "translateY(6px)",
           }}
         >
           <div className="flex flex-col gap-0.5">
             <span className="flex items-center gap-x-2 font-spline text-[0.55rem] text-gray font-bold uppercase">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                className="fill-gray size-[0.55rem]"
-                viewBox="0 0 256 256"
-              >
-                <path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"></path>
-              </svg>{" "}
               Playing
             </span>
+
             <span className="font-barlow text-xl font-extrabold text-white uppercase leading-none">
               {item.category}
             </span>
           </div>
+
           <span className="font-spline text-[0.55rem] text-white/60 uppercase flex items-center gap-1">
             View piece
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="8"
-              height="8"
-              className="fill-white/60"
-              viewBox="0 0 256 256"
-            >
-              <path d="M200,64V168a8,8,0,0,1-16,0V83.31L69.66,197.66a8,8,0,0,1-11.32-11.32L172.69,72H88a8,8,0,0,1,0-16H192A8,8,0,0,1,200,64Z" />
-            </svg>
           </span>
         </div>
 
-        {/* Progress bar */}
-        <div className="absolute bottom-0 left-0 w-full h-px bg-white/10 z-40">
+        {/* Progress */}
+        {!isMobile && (
+          <div className="absolute bottom-0 left-0 w-full h-px bg-white/10 z-40">
+            <div
+              className="h-full bg-white transition-none"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* External progress */}
+      {!isMobile && (
+        <div className="w-full h-px bg-white/10 mt-2 relative overflow-hidden">
           <div
-            className="h-full bg-white transition-none"
+            className="absolute left-0 top-0 h-full bg-white/30 transition-none"
             style={{ width: `${progress}%` }}
           />
         </div>
-      </div>
-
-      {/* Progress bar exterior */}
-      <div className="w-full h-px bg-white/10 mt-2 relative overflow-hidden">
-        <div
-          className="absolute left-0 top-0 h-full bg-white/30 transition-none"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
+      )}
     </div>
   );
 }
@@ -266,10 +297,10 @@ function InfoCard() {
 
 export default function VideoSection() {
   return (
-    <section className="hidden video-section w-full bg-black text-white px-6 pt-24 pb-16">
+    <section className="hidden video-section w-full bg-black text-white sm:px-6 pt-24 pb-16">
       {/* Header */}
       <div className="flex flex-col md:flex-row items-baseline justify-between mb-10 border-b border-white/20 pb-6">
-        <div className="flex flex-col md:flex-row items-baseline gap-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <h2 className="font-barlow text-3xl font-extrabold uppercase text-white">
             Editorial
           </h2>
@@ -285,44 +316,38 @@ export default function VideoSection() {
       </div>
 
       {/*
-        Bento grid — layout:
-        Desktop (4 cols, 2 rows):
-        [ tall(rowspan 2) ] [ normal ] [ normal ] [ info ]
-                            [ wide (colspan 2)  ] [ info ]  <- info stacks
-
-        Se logra con grid-rows explícito y las celdas usando row/col span
+        Mobile:  1 col, todos apilados en orden natural
+        Tablet:  2 cols, sin spans especiales
+        Desktop: 4 cols bento con row/col spans
       */}
-      <div className="grid gap-[1.6rem] grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
-        {/* 1 — Tall: rowspan 2 */}
-        <div style={{ gridRow: "1 / 3", gridColumn: "1 / 2" }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+        {/* 1 — Tall: rowspan 2 solo en md+ */}
+        <div className="col-span-2 md:col-span-1 md:[grid-row:1/3] md:[grid-column:1/2]">
           <VideoCard item={videos[0]} />
         </div>
 
         {/* 2 — Normal */}
-        <div style={{ gridRow: "1 / 2", gridColumn: "2 / 3" }}>
+        <div className="col-span-2 sm:col-span-1 md:[grid-row:1/2] md:[grid-column:2/3]">
           <VideoCard item={videos[1]} />
         </div>
 
         {/* 3 — Normal */}
-        <div style={{ gridRow: "1 / 2", gridColumn: "3 / 4" }}>
+        <div className="col-span-2 sm:col-span-1 md:[grid-row:1/2] md:[grid-column:3/4]">
           <VideoCard item={videos[2]} />
         </div>
 
-        {/* 4 — Info card */}
-        <div style={{ gridRow: "1 / 2", gridColumn: "4 / 5" }}>
+        {/* 4 — Info card: oculta en mobile, visible en md+ */}
+        <div className="hidden md:block md:[grid-row:1/2] md:[grid-column:4/5]">
           <InfoCard />
         </div>
 
-        {/* 5 — Wide: colspan 2 */}
-        <div style={{ gridRow: "2 / 3", gridColumn: "2 / 4" }}>
+        {/* 5 — Wide: full en mobile, colspan 2 en md+ */}
+        <div className="col-span-2 md:[grid-row:2/3] md:[grid-column:2/4]">
           <VideoCard item={videos[3]} />
         </div>
 
-        {/* 6 — Info card pequeña bottom right */}
-        <div
-          style={{ gridRow: "2 / 3", gridColumn: "4 / 5" }}
-          className="flex flex-col justify-end gap-3 border-t border-white/10 pt-4"
-        >
+        {/* 6 — Quote: oculta en mobile, visible en md+ */}
+        <div className="hidden md:flex md:[grid-row:2/3] md:[grid-column:4/5] flex-col justify-end gap-3 border-t border-white/10 pt-4">
           <p className="font-spline text-[0.55rem] text-gray uppercase leading-relaxed">
             Natural fabrics.
             <br />

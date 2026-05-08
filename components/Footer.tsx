@@ -80,7 +80,7 @@ export default function Footer() {
         <div className="flex items-center justify-between gap-4 pt-6">
           <p className="text-gray text-[0.75rem]">All rights reserved.</p>
           <div className="flex items-center gap-3 text-gray text-[0.75rem]">
-            <div className="flex gap-1">
+            <div className="hidden md:flex gap-1">
               <span className="text-gray">▊</span>
               <span className="text-white">▊</span>
             </div>
